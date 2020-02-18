@@ -1,4 +1,5 @@
 client/chat/node_modules
+
 client/cordova/node_modules
 client/cordova/platforms
 client/cordova/plugins
