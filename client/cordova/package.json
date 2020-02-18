@@ -1,0 +1,55 @@
+{
+  "name": "chat",
+  "displayName": "",
+  "version": "1.0.0",
+  "description": "",
+  "scripts": {
+    "build": "webpack --config webpack.config.js",
+    "clean": "rimraf ./www/js/main.js & rimraf ./www/js/main.js.map",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start:android": "npm run clean && npm run build && cordova run android",
+    "postinstall": "cordova platform add android && cordova plugin add cordova-plugin-device"
+  },
+  "keywords": [
+    "cordova",
+    "react",
+    "typescript",
+    "webpack"
+  ],
+  "devDependencies": {
+    "@types/react": "^16.0.18",
+    "@types/react-dom": "^16.0.2",
+    "awesome-typescript-loader": "^3.2.3",
+    "babel-core": "^6.26.0",
+    "babel-loader": "^7.1.2",
+    "babel-preset-es2015": "^6.24.1",
+    "babel-preset-es2015-node": "^6.1.1",
+    "babel-preset-react": "^6.24.1",
+    "rimraf": "^2.6.2",
+    "source-map-loader": "^0.2.2",
+    "standard-loader": "^6.0.1",
+    "ts-loader": "^3.0.5",
+    "tslint": "^5.8.0",
+    "tslint-config-standard": "^6.0.1",
+    "tslint-loader": "^3.5.3",
+    "typescript": "^2.5.3",
+    "webpack": "^3.8.1"
+  },
+  "dependencies": {
+    "cordova-android": "^6.3.0",
+    "cordova-plugin-device": "^1.1.6",
+    "cordova-plugin-whitelist": "^1.3.2",
+    "device": "^0.3.8",
+    "react": "^16.0.0",
+    "react-dom": "^16.0.0"
+  },
+  "cordova": {
+    "plugins": {
+      "cordova-plugin-whitelist": {},
+      "cordova-plugin-device": {}
+    },
+    "platforms": [
+      "android"
+    ]
+  }
+}
