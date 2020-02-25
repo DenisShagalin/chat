@@ -6,14 +6,14 @@ module.exports = (queryInterface, Sequelize) => {
       primaryKey: true,
       type: Sequelize.INTEGER
     },
+    nick: {
+      type: Sequelize.STRING,
+    },
     name: {
       type: Sequelize.STRING
     },
     password: {
       type: Sequelize.STRING
-    },
-    roleId: {
-      type: Sequelize.STRING,
     },
   }, {
     timestamps: false,
