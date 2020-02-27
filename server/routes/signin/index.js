@@ -5,10 +5,10 @@ const db = require('../../db/models');
 const jwt = require('jsonwebtoken');
 const config = require('../config.json');
 
-const schemas = require('../../schemas/login');
+const schemas = require('../../schemas');
 
 router.post('/', (req, res) => {
-  const { error, value } = Joi.validate(req.body, schemas.loginSchema);
+  const { error, value } = Joi.validate(req.body, schemas.signinSchema);
   if (error) {
     return res.status(404).send({ message : 'Invalid name or password' });
   }
@@ -30,11 +30,5 @@ router.post('/', (req, res) => {
       res.status(404).send({ message : 'Invalid name or password' });
     })
 });
-
-router.get('/', (req, res) => {
-  res.send({
-    message: 'ok'
-  });
-})
 
 module.exports = router;
