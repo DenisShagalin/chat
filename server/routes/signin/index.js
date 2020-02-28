@@ -10,7 +10,7 @@ const schemas = require('../../schemas');
 router.post('/', (req, res) => {
   const { error, value } = Joi.validate(req.body, schemas.signinSchema);
   if (error) {
-    return res.status(404).send({ message : 'Invalid name or password' });
+    return res.status(404).send({ message : 'Invalid nickname or password' });
   }
 
   db.users.findOne({
@@ -27,7 +27,7 @@ router.post('/', (req, res) => {
       res.send({ token });
     })
     .catch(() => {
-      res.status(404).send({ message : 'Invalid name or password' });
+      res.status(404).send({ message : 'Invalid nickname or password' });
     })
 });
 
