@@ -1,0 +1,7 @@
+.signin__container {
+    display: flex;
+    width: 75%;
+    height: 40%;
+    flex-direction: column;
+    justify-content: space-between;
+}

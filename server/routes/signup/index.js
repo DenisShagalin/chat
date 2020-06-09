@@ -41,7 +41,7 @@ router.post('/', (req, res) => {
           const token = jwt.sign(result.dataValues, config.secret, {
             expiresIn: config.tokenLife
           });
-          res.send({ token });
+          res.send({ token, user: result.dataValues });
         })
         .catch(() => {
           res.status(404).send({ message: 'Invalid nickname or email' });

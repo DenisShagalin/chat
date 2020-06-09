@@ -1,0 +1,7 @@
+.signup__container {
+    display: flex;
+    width: 75%;
+    height: 60%;
+    flex-direction: column;
+    justify-content: space-between;
+}

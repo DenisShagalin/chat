@@ -1,4 +1,5 @@
 const express = require('express');
+const md5 = require('md5');
 const router = express.Router();
 const Joi = require('joi');
 const db = require('../../db/models');
@@ -16,7 +17,7 @@ router.post('/', (req, res) => {
   db.users.findOne({
     where: {
       nick: value.nick,
-      password: value.password,
+      password: md5(value.password),
     },
   })
     .then((result) => {
@@ -24,7 +25,10 @@ router.post('/', (req, res) => {
         throw new Error();
       }
       const token = jwt.sign(result.dataValues, config.secret, { expiresIn: config.tokenLife });
-      res.send({ token });
+      res.send({
+        token,
+        user: result.dataValues,
+      });
     })
     .catch(() => {
       res.status(404).send({ message : 'Invalid nickname or password' });
