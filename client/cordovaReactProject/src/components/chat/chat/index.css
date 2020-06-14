@@ -1,0 +1,122 @@
+.chat_body {
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+}
+.chat_body_leave {
+  width: 100%;
+  display: flex;
+  justify-content: flex-end;
+  flex-direction: row;
+}
+.chat_body_leave a {
+  margin: 10px 10px 0 0;
+  text-decoration: none;
+}
+.chat_body_wrap {
+  position: relative;
+  width: 100%;
+  height: 90vh;
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+}
+.chat_body_members {
+  border-radius: 15px;
+  background-color: rgba(196, 196, 196, 0.5);
+  height: 90vh;
+  width: 33%;
+  display: flex;
+  flex-direction: column;
+}
+.chat_body_members span {
+  font-family: Raleway;
+  font-style: normal;
+  font-weight: 500;
+  font-size: 13px;
+  line-height: 15px;
+  text-align: center;
+  width: 100%;
+  color: rgba(236, 236, 236, 0.8);
+  padding: 6px 0 6px 0px;
+}
+.chat_body_members span:hover {
+  background-color: rgba(196, 196, 196, 0.3);
+}
+.chat_body_messages {
+  height: 90vh;
+  width: 67%;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+}
+.message_input {
+  resize: none;
+  border: none;
+  outline: none;
+  border-radius: 10px;
+  background-color: rgba(196, 196, 196, 0.3);
+  color: #ececec;
+}
+.messages_inputs {
+  display: flex;
+  flex-direction: row;
+}
+.messages_inputs textarea {
+  width: 80%;
+}
+.messages_inputs button {
+  width: 20%;
+  height: 20px;
+}
+
+.messages_list {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  overflow: scroll;
+  flex-flow: row wrap;
+}
+.messages_list div {
+  width: 100%;
+  margin: 10px 0 0 0;
+  min-height: 35px;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+.msg_name {
+  font-family: Raleway;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 15px;
+}
+.msg_msg {
+  margin-top: 2px;
+  margin-bottom: 2px;
+  background-color: rgba(196, 196, 196, 0.35);
+  border-radius: 10px;
+  padding: 4px;
+  font-family: Raleway;
+  font-style: normal;
+  font-weight: 300;
+  line-height: 12px;
+
+  color: rgba(236, 236, 236, 0.8);
+}
+
+.private {
+  z-index: 5;
+  position: absolute;
+  width: 90%;
+  height: 30vh;
+  margin-top: 15vh;
+  margin-left: 5%;
+  background-color: rgba(196, 196, 196, 0.9);
+  display: flex;
+  flex-direction: column;
+}
