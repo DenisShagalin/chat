@@ -2,14 +2,22 @@ import React, { useState, useEffect } from "react";
 import { connect } from "react-redux";
 import { Link } from "react-router-dom";
 import Button from "../../reusable/button";
-import { loadAllChats } from "../../../common/actions/chat";
 import "./index.css";
 
-const ChatList = ({ chats, loadAllChats }) => {
-  const [search, changeSearch] = useState("");
+import socketIO from "../../../services/socket";
+
+const ChatList = ({ token }) => {
+  const [search, handleChangeSearch] = useState("");
+  const [chats, handleSetChatsList] = useState([]);
 
   useEffect(() => {
-    loadAllChats(search);
+    const socket = socketIO(token);
+    socket.emit("chats", { search });
+    socket.on("chats", handleSetChatsList);
+
+    return () => {
+      socket.off("chats");
+    };
   }, [search]);
 
   return (
@@ -22,11 +30,15 @@ const ChatList = ({ chats, loadAllChats }) => {
       <input
         value={search}
         placeholder="Search..."
-        onChange={(e) => changeSearch(e.target.value)}
+        onChange={(e) => handleChangeSearch(e.target.value)}
       />
       <div className="chat_list">
         {chats.map((item, i) => {
-          return <Link key={i} to={`/chat/${item.id}`}>{item.name}</Link>;
+          return (
+            <Link key={i} to={`/chat/${item.id}`}>
+              {item.name}
+            </Link>
+          );
         })}
       </div>
     </div>
@@ -35,9 +47,7 @@ const ChatList = ({ chats, loadAllChats }) => {
 
 export default connect(
   (store) => ({
-    chats: store.chat.chats,
+    token: store.auth.token,
   }),
-  {
-    loadAllChats,
-  }
+  {}
 )(ChatList);

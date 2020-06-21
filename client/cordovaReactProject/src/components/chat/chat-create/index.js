@@ -3,14 +3,14 @@ import { connect } from "react-redux";
 import { Link } from "react-router-dom";
 import Input from "../../reusable/input";
 import Button from "../../reusable/button";
-import { createChat } from '../../../common/actions/chat';
-import history from '../../../services/history';
-
+import history from "../../../services/history";
 import "./index.css";
 
-const CreateChat = ({ id, createChat }) => {
-  const [name, setName] = useState("");
+import socketIO from "../../../services/socket";
 
+const CreateChat = ({ id, token }) => {
+  const [name, setName] = useState("");
+  const socket = socketIO(token);
   return (
     <div className="create-chat__container">
       <div className="chat_plus">
@@ -29,8 +29,8 @@ const CreateChat = ({ id, createChat }) => {
           title="Create"
           disabled={!name}
           onClick={() => {
-            createChat(name, id);
-            history.push('/');
+            socket.emit("create_chat", { name, creator: id });
+            history.push("/");
           }}
         />
       </div>
@@ -38,8 +38,10 @@ const CreateChat = ({ id, createChat }) => {
   );
 };
 
-export default connect((store) => ({
-  id: store.auth.user.id,
-}), {
-  createChat,
-})(CreateChat);
+export default connect(
+  (store) => ({
+    id: store.auth.user.id,
+    token: store.auth.token,
+  }),
+  {}
+)(CreateChat);

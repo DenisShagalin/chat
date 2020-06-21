@@ -10,6 +10,7 @@ import {
 
 function* signIn(action) {
   try {
+    localStorage.removeItem('auth');
     const user = yield call(http, {
       url: '/signin',
       method: 'POST',

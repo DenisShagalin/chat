@@ -4,12 +4,11 @@ import { Link } from "react-router-dom";
 import TextareaAutosize from "@material-ui/core/TextareaAutosize";
 import Button from "../../reusable/button";
 import history from "../../../services/history";
-import socketIOClient from "socket.io-client";
-import { Member } from './member';
+import { Member } from "./member";
 
 import "./index.css";
 
-const socketApi = process.env.REACT_APP_SOCKET_API;
+import socketIO from "../../../services/socket";
 
 const getChatId = (location) => {
   const path = location.split("/");
@@ -18,27 +17,19 @@ const getChatId = (location) => {
 };
 
 const Chat = ({ userId, token }) => {
-  const [message, setMessage] = useState("");
-  const [pMessage, setPMessage] = useState("");
-  const [members, setMembers] = useState([]);
-  const [messages, setMessages] = useState([]);
+  const [message, handleSetMessage] = useState("");
+  const [pMessage, handleSetPrivateMessage] = useState("");
+  const [members, handleMembersFromSocket] = useState([]);
+  const [messages, handleMessagesFromSocket] = useState([]);
   const [recipient, setRecipient] = useState(null);
 
   const chatId = getChatId(history.location.pathname);
-  const socket = socketIOClient(socketApi, {
-    query: {
-      token: token,
-    },
-  });
+  const socket = socketIO(token);
 
   useEffect(() => {
     socket.emit("entry_to_chat", { userId, chatId });
-    socket.on(`chat_members/${chatId}`, (members) => {
-      setMembers(members);
-    });
-    socket.on(`messages/${chatId}/${userId}`, (messages) => {
-      setMessages(messages);
-    });
+    socket.on(`chat_members/${chatId}`, handleMembersFromSocket);
+    socket.on(`messages/${chatId}/${userId}`, handleMessagesFromSocket);
 
     return () => {
       socket.emit("leave_chat", { userId, chatId });
@@ -58,7 +49,7 @@ const Chat = ({ userId, token }) => {
       },
       userOptions: { chatId, userId },
     });
-    setMessage("");
+    handleSetMessage("");
   };
 
   const postPrivateMessage = () => {
@@ -72,8 +63,8 @@ const Chat = ({ userId, token }) => {
       },
       userOptions: { chatId, userId },
     });
-    setRecipient(null)
-    setPMessage('')
+    setRecipient(null);
+    handleSetPrivateMessage("");
   };
 
   return (
@@ -90,14 +81,14 @@ const Chat = ({ userId, token }) => {
               <Button
                 title="Close"
                 onClick={() => {
-                  setRecipient(null)
-                  setPMessage('')
+                  setRecipient(null);
+                  handleSetMessage("");
                 }}
               />
             </div>
             <TextareaAutosize
               aria-label="empty textarea"
-              onChange={(e) => setPMessage(e.target.value)}
+              onChange={(e) => handleSetPrivateMessage(e.target.value)}
               value={pMessage}
             />
             <Button
@@ -109,12 +100,7 @@ const Chat = ({ userId, token }) => {
         )}
         <div className="chat_body_members">
           {members.map((mem, i) => (
-            <Member
-              key={i}
-              data={mem}
-              onClick={setRecipient}
-              userId={userId}
-            />
+            <Member key={i} data={mem} onClick={setRecipient} userId={userId} />
           ))}
         </div>
         <div className="chat_body_messages">
@@ -129,7 +115,7 @@ const Chat = ({ userId, token }) => {
           <div className="messages_inputs">
             <TextareaAutosize
               aria-label="empty textarea"
-              onChange={(e) => setMessage(e.target.value)}
+              onChange={(e) => handleSetMessage(e.target.value)}
               value={message}
               className="message_input"
             />

@@ -1,6 +1,6 @@
-const db = require('../db/models');
+const db = require("../db/models");
 
-db.chatsToUsers.belongsTo(db.users, { foreignKey: 'userId' });
+db.chatsToUsers.belongsTo(db.users, { foreignKey: "userId" });
 
 class ChatMiddleware {
   async setNewMemberToChat({ userId, chatId }) {
@@ -15,8 +15,8 @@ class ChatMiddleware {
       where: {
         chatId: chatId,
         userId: userId,
-      }
-    })
+      },
+    });
   }
 
   async removeMemberFromChat({ userId, chatId }) {
@@ -24,7 +24,7 @@ class ChatMiddleware {
       where: {
         chatId: chatId,
         userId: userId,
-      }
+      },
     });
   }
 
@@ -34,12 +34,37 @@ class ChatMiddleware {
       include: [
         {
           model: db.users,
-          attributes: ['nick', 'id']
+          attributes: ["nick", "id"],
         },
       ],
       where: {
         chatId: chatId,
+      },
+    });
+  }
+
+  async getAllChats(search) {
+    return db.chats.findAll({
+      where: {
+        name: {
+          [db.Op.iLike]: `%${search || ""}%`,
+        },
+      },
+    })
+  }
+
+  async getChatByName(name) {
+    return db.chats.findOne({
+      where: {
+        name: name,
       }
+    })
+  }
+
+  async postNewChat(options) {
+    return db.chats.create({
+      name: options.name,
+      creatorId: options.creator,
     });
   }
 }

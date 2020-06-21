@@ -44,8 +44,7 @@
         "build": "react-scripts build",
         "test-react": "react-scripts test",
         "eject": "react-scripts eject",
-        "build-sdk": "npx cordova run android",
-        "build-cordova": "npx cordova build"
+        "build-cordova": "npx cordova build && npx cordova run android"
     },
     "keywords": [
         "ecosystem:cordova"
