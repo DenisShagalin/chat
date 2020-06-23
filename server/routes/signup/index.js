@@ -34,7 +34,6 @@ router.post('/', (req, res) => {
         .create({
           nick: value.nick,
           email: value.email,
-          name: value.name,
           password: md5(value.password)
         })
         .then((result) => {

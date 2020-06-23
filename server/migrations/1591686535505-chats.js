@@ -17,6 +17,10 @@ module.exports = {
         type: Sequelize.INTEGER,
         allowNull: false,
       },
+      type: {
+        type: Sequelize.ENUM('public','private'),
+        allowNull: false,
+      },
     });
   },
   down: (queryInterface) => {

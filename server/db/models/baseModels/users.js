@@ -9,9 +9,6 @@ module.exports = (queryInterface, Sequelize) => {
     nick: {
       type: Sequelize.STRING,
     },
-    name: {
-      type: Sequelize.STRING
-    },
     password: {
       type: Sequelize.STRING
     },

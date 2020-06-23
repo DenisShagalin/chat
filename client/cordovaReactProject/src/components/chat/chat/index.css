@@ -12,7 +12,7 @@
   flex-direction: row;
 }
 .chat_body_leave a {
-  margin: 10px 10px 0 0;
+  margin: 5px 5px 0 0;
   text-decoration: none;
 }
 .chat_body_wrap {
@@ -85,9 +85,13 @@
   width: 100%;
   margin: 10px 0 0 0;
   min-height: 35px;
+  /* max-height: 100px; */
   display: flex;
   flex-direction: column;
   position: relative;
+}
+.messages_list img {
+  width: 100%;
 }
 .msg_name {
   font-family: Raleway;

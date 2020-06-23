@@ -14,6 +14,9 @@ module.exports = (queryInterface, Sequelize) => {
       creatorId: {
         type: Sequelize.INTEGER,
       },
+      type: {
+        type: Sequelize.ENUM('public','private'),
+      },
     },
     {
       timestamps: false,

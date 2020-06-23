@@ -5,7 +5,8 @@ import {
   setAuthData,
   SIGN_IN,
   SIGN_UP,
-
+  LOAD_USERS,
+  setUsers,
 } from '../actions/auth';
 
 function* signIn(action) {
@@ -44,7 +45,22 @@ function* signUp(action) {
   }
 }
 
+function* loadUsers(action) {
+  try {
+    const users = yield call(http, {
+      url: `/users/${action.payload}`,
+      method: 'GET',
+    });
+
+    yield put(setUsers(users.data));
+
+  } catch (error) {
+    console.log(error);
+  }
+}
+
 export default function* authSaga() {
   yield takeEvery(SIGN_IN, signIn);
   yield takeEvery(SIGN_UP, signUp);
+  yield takeEvery(LOAD_USERS, loadUsers);
 };

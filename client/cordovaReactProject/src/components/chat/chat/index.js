@@ -3,12 +3,13 @@ import { connect } from "react-redux";
 import { Link } from "react-router-dom";
 import TextareaAutosize from "@material-ui/core/TextareaAutosize";
 import Button from "../../reusable/button";
+import MultiSelect from "../../reusable/multi-select";
 import history from "../../../services/history";
 import { Member } from "./member";
-
-import "./index.css";
-
+import { loadUsers } from "../../../common/actions/auth";
 import socketIO from "../../../services/socket";
+import isBase64 from "is-base64";
+import "./index.css";
 
 const getChatId = (location) => {
   const path = location.split("/");
@@ -16,91 +17,140 @@ const getChatId = (location) => {
   return chatId;
 };
 
-const Chat = ({ userId, token }) => {
+const Chat = ({ userId, token, loadUsers, users }) => {
   const [message, handleSetMessage] = useState("");
-  const [pMessage, handleSetPrivateMessage] = useState("");
   const [members, handleMembersFromSocket] = useState([]);
   const [messages, handleMessagesFromSocket] = useState([]);
-  const [recipient, setRecipient] = useState(null);
+  const [isPopupOpen, handleTogglePopup] = useState(false);
+  const [usersName, handleSetUsersName] = useState([]);
+  const [filteredUsers, handleSetFilteredUsers] = useState([]);
+
+  const handleChange = (event) => {
+    handleSetUsersName(event.target.value);
+  };
 
   const chatId = getChatId(history.location.pathname);
   const socket = socketIO(token);
 
   useEffect(() => {
+    const filteredUsers = [];
+    users.forEach((user) => {
+      const isMember = members.find((m) => m.user.id === user.id);
+      if (!isMember) {
+        filteredUsers.push(user);
+      }
+    });
+    handleSetFilteredUsers(filteredUsers);
+  }, [users, members]);
+
+  useEffect(() => {
     socket.emit("entry_to_chat", { userId, chatId });
     socket.on(`chat_members/${chatId}`, handleMembersFromSocket);
-    socket.on(`messages/${chatId}/${userId}`, handleMessagesFromSocket);
+    socket.on(`messages/${chatId}`, handleMessagesFromSocket);
 
     return () => {
-      socket.emit("leave_chat", { userId, chatId });
       socket.off(`chat_members/${chatId}`);
       socket.off(`messages/${chatId}/${userId}`);
     };
   }, []);
 
-  const postPublicMessage = () => {
+  const postMessage = () => {
     socket.emit("send_message", {
       msgOptions: {
-        type: "public",
         message,
         chatId,
         userId,
-        recipientId: null,
       },
       userOptions: { chatId, userId },
     });
     handleSetMessage("");
   };
 
-  const postPrivateMessage = () => {
-    socket.emit("send_message", {
-      msgOptions: {
-        type: "private",
-        message: pMessage,
-        chatId,
-        userId,
-        recipientId: recipient.id,
+  const postPicture = () => {
+    if (!window.cordova) return;
+
+    navigator.camera.getPicture(
+      (image) => {
+        socket.emit("send_message", {
+          msgOptions: {
+            message: "data:image/png;base64," + image,
+            chatId,
+            userId,
+          },
+          userOptions: { chatId, userId },
+        });
       },
-      userOptions: { chatId, userId },
-    });
-    setRecipient(null);
-    handleSetPrivateMessage("");
+      (error) => console.log(error),
+      {
+        destinationType: navigator.camera.DestinationType.DATA_URL,
+      }
+    );
+  };
+
+  const renderMessage = (msg) => {
+    if (isBase64(msg, { mimeRequired: true })) {
+      return <img src={msg} />;
+    }
+    return msg;
   };
 
   return (
     <div className="chat_body">
       <div className="chat_body_leave">
         <Link to="/">
-          <Button title="Leave Chat" />
+          <Button title="Back" />
+        </Link>
+        <a>
+          <Button
+            title="Add users"
+            onClick={() => {
+              handleTogglePopup(true);
+              loadUsers(userId);
+            }}
+          />
+        </a>
+        <Link to="/">
+          <Button
+            title="Leave Chat"
+            onClick={() => {
+              socket.emit("leave_chat", { userId, chatId });
+            }}
+          />
         </Link>
       </div>
       <div className="chat_body_wrap">
-        {recipient && (
+        {isPopupOpen && (
           <div className="private">
             <div className="chat_body_leave">
               <Button
                 title="Close"
                 onClick={() => {
-                  setRecipient(null);
-                  handleSetMessage("");
+                  handleTogglePopup(false);
+                  handleSetUsersName([]);
                 }}
               />
             </div>
-            <TextareaAutosize
-              aria-label="empty textarea"
-              onChange={(e) => handleSetPrivateMessage(e.target.value)}
-              value={pMessage}
+            <MultiSelect
+              handleChange={handleChange}
+              values={usersName}
+              users={filteredUsers}
             />
             <Button
-              title="Send"
-              onClick={postPrivateMessage}
-              disabled={!pMessage}
+              title="Add Users"
+              onClick={() => {
+                socket.emit("add_new_members_to_chat", {
+                  chatId,
+                  users: usersName.map((user) => user.id),
+                });
+                handleTogglePopup(false);
+                handleSetUsersName([]);
+              }}
             />
           </div>
         )}
         <div className="chat_body_members">
           {members.map((mem, i) => (
-            <Member key={i} data={mem} onClick={setRecipient} userId={userId} />
+            <Member key={i} data={mem} />
           ))}
         </div>
         <div className="chat_body_messages">
@@ -108,7 +158,7 @@ const Chat = ({ userId, token }) => {
             {messages.map((msg) => (
               <div key={msg.id}>
                 <span className="msg_name">{msg.user && msg.user.nick}</span>
-                <span className="msg_msg">{msg.message}</span>
+                <span className="msg_msg">{renderMessage(msg.message)}</span>
               </div>
             ))}
           </div>
@@ -119,11 +169,8 @@ const Chat = ({ userId, token }) => {
               value={message}
               className="message_input"
             />
-            <Button
-              title="Send"
-              disabled={!message}
-              onClick={postPublicMessage}
-            />
+            <Button title="Send" disabled={!message} onClick={postMessage} />
+            <Button title="Picture" onClick={postPicture} />
           </div>
         </div>
       </div>
@@ -135,6 +182,7 @@ export default connect(
   (store) => ({
     userId: store.auth.user.id,
     token: store.auth.token,
+    users: store.auth.users,
   }),
-  {}
+  { loadUsers }
 )(Chat);

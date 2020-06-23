@@ -21,13 +21,11 @@ npm start
 Create .env with the following:
 ```
 REACT_APP_API=
-REACT_APP_SOCKET_API=
 ```
 Then run
 ```
 npm install
 npm run build-cordova
-npm run build-sdk
 ```
 
 Or you can run localy

@@ -9,12 +9,8 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.INTEGER,
       },
-      type: {
-        type: Sequelize.ENUM('public','private'),
-        allowNull: false,
-      },
       message: {
-        type: Sequelize.STRING,
+        type: Sequelize.TEXT,
         allowNull: false,
       },
       chatId: {
@@ -28,14 +24,6 @@ module.exports = {
       userId: {
         type: Sequelize.INTEGER,
         allowNull: false,
-        references: {
-          model: "users",
-          key: "id",
-        },
-      },
-      recipientId: {
-        type: Sequelize.INTEGER,
-        allowNull: true,
         references: {
           model: "users",
           key: "id",

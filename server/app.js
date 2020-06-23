@@ -10,7 +10,7 @@ const cors = require("cors");
 const server = require("http").createServer(app);
 const io = require("socket.io")(server);
 
-const sockets = require('./sockets')(io);
+const sockets = require("./sockets")(io);
 const routes = require("./routes");
 const config = require("./routes/config.json");
 
@@ -25,17 +25,10 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use("/public", express.static(__dirname + "/public"));
 
-app.all('/', function(req, res, next) {
+app.all("/", function (req, res, next) {
   res.header("Access-Control-Allow-Origin", "*");
   next();
- });
-
-app.use("/", routes);
-app.use("/", sockets)
-
-app.get("/", (req, res) => {
-  res.send(({ ok: 'ok'}))
-})
+});
 
 io.use((socket, next) => {
   if (socket.handshake.query && socket.handshake.query.token) {
@@ -47,6 +40,13 @@ io.use((socket, next) => {
   } else {
     next(new Error("Authentication error"));
   }
+});
+
+app.use("/", routes);
+app.use("/", sockets);
+
+app.get("/", (req, res) => {
+  res.send({ ok: "ok" });
 });
 
 server.listen(process.env.PORT || 8000);

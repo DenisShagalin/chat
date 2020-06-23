@@ -12,3 +12,9 @@
     width: 60%;
     height: 30vh;
 }
+.MuiFormLabel-root {
+    color: white !important;
+}
+.MuiInputBase-root {
+    color: white !important;
+}

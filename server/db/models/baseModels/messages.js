@@ -8,19 +8,13 @@ module.exports = (queryInterface, Sequelize) => {
         primaryKey: true,
         type: Sequelize.INTEGER,
       },
-      type: {
-        type: Sequelize.ENUM('public','private'),
-      },
       message: {
-        type: Sequelize.STRING,
+        type: Sequelize.TEXT,
       },
       chatId: {
         type: Sequelize.INTEGER,
       },
       userId: {
-        type: Sequelize.INTEGER,
-      },
-      recipientId: {
         type: Sequelize.INTEGER,
       },
       createdAt: {

@@ -9,7 +9,6 @@ import './signup.css';
 const SignUp = ({ signUp }) => {
   const [nick, setNick] = useState('');
   const [password, setPassword] = useState('');
-  const [name, setName] = useState('');
   const [email, setEmail] = useState('');
 
   const isAllFieldsFilled = !!nick && !!password && !!email
@@ -29,12 +28,6 @@ const SignUp = ({ signUp }) => {
         type='password'
       />
       <Input
-        label='Name'
-        value={name}
-        onChange={(e) => setName(e.target.value)}
-        className='s_input'
-      />
-      <Input
         label='Email *'
         value={email}
         onChange={(e) => setEmail(e.target.value)}
@@ -47,7 +40,6 @@ const SignUp = ({ signUp }) => {
           isAllFieldsFilled && signUp({
             nick,
             password,
-            name,
             email,
           });
         }}
